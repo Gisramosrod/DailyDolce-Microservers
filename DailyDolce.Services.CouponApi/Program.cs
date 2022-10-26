@@ -1,5 +1,5 @@
-using DailyDolce.Services.ShoppingCartApi.Data;
-using DailyDolce.Services.ShoppingCartApi.Services.Cart;
+using DailyDolce.Services.CouponApi.Data;
+using DailyDolce.Services.CouponApi.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -16,8 +16,8 @@ builder.Services.AddDbContext<DataContext>(options => {
 //Mapper
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
-//ShoppingCart Services
-builder.Services.AddScoped<ICartService, CartService>();
+//Coupon Service
+builder.Services.AddScoped<ICouponService, CouponService>();
 
 //Authentication
 builder.Services.AddAuthentication("Bearer").AddJwtBearer("Bearer", options => {
@@ -25,14 +25,6 @@ builder.Services.AddAuthentication("Bearer").AddJwtBearer("Bearer", options => {
     options.TokenValidationParameters = new TokenValidationParameters() {
         ValidateAudience = false
     };
-});
-
-//Authorization (not used)
-builder.Services.AddAuthorization(options => {
-    options.AddPolicy("ApiScope", policy => {
-        policy.RequireAuthenticatedUser();
-        policy.RequireClaim("scope", "dailyDolce");
-    });
 });
 
 builder.Services.AddControllers();
