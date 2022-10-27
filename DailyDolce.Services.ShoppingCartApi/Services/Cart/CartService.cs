@@ -15,7 +15,22 @@ namespace DailyDolce.Services.ShoppingCartApi.Services.Cart {
             _mapper = mapper;
         }
 
-        public async Task<bool> AddProductToCart(AddToCartDto addToCartDto) {
+        public async Task<CartDto> GetCartByUserId(string userId) {
+
+            var cart = await _context.Carts
+                .Include(c => c.CartProducts).ThenInclude(cp => cp.Product)
+                .FirstOrDefaultAsync(c => c.UserId == userId);
+
+            if (cart == null) return null;
+
+            var cartProductsDto = _mapper.Map<List<CartProductDto>>(cart.CartProducts);
+            var cartDto = _mapper.Map<CartDto>(cart);
+            cartDto.CartProductsDto = cartProductsDto;
+
+            return cartDto;
+        }
+
+        public async Task<bool> AddToCart(AddToCartDto addToCartDto) {
 
             var productToAddDto = addToCartDto.ProductDto;
             var dbProductToAdd = await _context.Products
@@ -70,22 +85,7 @@ namespace DailyDolce.Services.ShoppingCartApi.Services.Cart {
 
             return true;
         }
-
-        public async Task<GetCartDto> GetCartByUserId(string userId) {
-
-            var cart = await _context.Carts
-                .Include(c => c.CartProducts).ThenInclude(cp => cp.Product)
-                .FirstOrDefaultAsync(c => c.UserId == userId);
-
-            if (cart == null) return null;
-
-            var cartProductsDto = _mapper.Map<List<CartProductDto>>(cart.CartProducts);
-            var cartDto = _mapper.Map<GetCartDto>(cart);
-            cartDto.CartProductsDto = cartProductsDto;
-
-            return cartDto;
-        }
-
+        
         public async Task<bool> RemoveFromCart(int cartProductId) {            
 
             var cartProduct = await _context.CartProducts
@@ -98,37 +98,21 @@ namespace DailyDolce.Services.ShoppingCartApi.Services.Cart {
             return true;
         }
 
-        /*
-          public async Task<GetCartDto> GetCartByUserId(string userId) {
-
-            var cart = await _context.Carts
-                .Include(c => c.CartProducts)
-                .FirstOrDefaultAsync(c => c.UserId == userId);
-
-            if (cart == null) return null;
-
-            List<ProductDto> productsDto = new ();
-            foreach (var cartProduct in cart.CartProducts) {
-
-                var product = await _context.Products
-                    .FirstOrDefaultAsync(p => p.Id == cartProduct.Id);
-
-                if (product != null) {
-                    var productDto = _mapper.Map<ProductDto>(product);
-                    productDto.Quantity = cartProduct.Quantity;
-                    productsDto.Add(productDto);                   
-                }            
-            }
-
-            var cartDto = _mapper.Map<GetCartDto>(cart);
-            cartDto.ProductsDto = productsDto;
-
-            return cartDto;
+        public async Task<bool> ApplyCoupon(string userId, string couponCode) {
+            var cart = await _context.Carts.FirstOrDefaultAsync(c => c.UserId == userId);
+            cart.CouponCode = couponCode;
+            await _context.SaveChangesAsync();
+            return true;
         }
-         */
 
-        /*
+        public async Task<bool> RemoveCoupon(string userId) {
+            var cart = await _context.Carts.FirstOrDefaultAsync(c => c.UserId == userId);
+            cart.CouponCode = null;
+            await _context.SaveChangesAsync();
+            return true;
+        }
 
+     /*
 
  public async Task<bool> ClearCart(string userId) {
 

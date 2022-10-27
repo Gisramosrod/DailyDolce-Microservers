@@ -1,8 +1,10 @@
-﻿@model DailyDolce.Web.Dtos.Cart.GetCartDto
+﻿@model DailyDolce.Web.Dtos.Cart.CartDto
 
 <form method="post">
     <br />
     <input asp-for="Id" hidden />
+    <input asp-for="UserId" hidden />
+
     <div class="">
         <div class="card border mt-4 container">
             <div class="card-header bg-dark text-light ml-0 row ">
@@ -55,9 +57,8 @@
                             </div>
                             <div class="col-2 col-lg-1 p-0 pt-lg-4 text-center">
                                 <a class="btn btn-outline-danger"
-                                asp-action="Remove"
-                                asp-route-cartProductId=@cartProductDto.Id
-                                >
+                           asp-action="RemoveFromCart"
+                           asp-route-cartProductId=@cartProductDto.Id>
                                     <i class="fas fa-trash"></i>
                                 </a>
                             </div>
@@ -66,12 +67,31 @@
                     }
                     <div class="row">
                         <div class="col-6">
-                            <span>Coupon:</span>
-                            <input />
-                            <button type="submit" class="btn-success"> Apply </button>
+                            @if (string.IsNullOrEmpty(Model.CouponCode)) {
+                                <span>Coupon:</span>
+                                <input asp-for="CouponCode" />
+                                <button type="submit"
+                                class="btn btn-success"
+                                asp-action="ApplyCoupon"
+                                >
+                                    Apply
+                                </button>
+                            } else {
+                                <span>Coupon:</span>
+                                <input asp-for="CouponCode" disabled />
+                                <button type="submit"
+                                class="btn btn-danger"
+                                asp-action="RemoveCoupon"
+                                >
+                                    Remove
+                                </button>
+                            }
                         </div>
                         <div class="col-6 text-end">
                             <span class="text-danger" style="font-size:21px;">  Order Total : @Model.TotalOrder.ToString("c") <br /></span>
+                            @if(Model.Discount > 0){
+                                <span class="text-success">Order Discount: @Model.Discount.ToString("c")</span>
+                            }
                         </div>
                     </div>
                 </div>
@@ -79,9 +99,8 @@
                     <div class="col-6 col-md-3 offset-md-6">
                     </div>
                     <div class="col-6 col-md-3">
-                        <a class="btn btn-success form-control "
-                        asp-action="Checkout"
-                        >
+                        <a class="btn btn-success form-control"
+                       asp-action="Checkout">
                             <span>Checkout</span>
                         </a>
                     </div>

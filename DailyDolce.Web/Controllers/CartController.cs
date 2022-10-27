@@ -1,6 +1,8 @@
 ﻿using DailyDolce.Web.Dtos;
 using DailyDolce.Web.Dtos.Cart;
+using DailyDolce.Web.Dtos.Coupon;
 using DailyDolce.Web.Services.Cart;
+using DailyDolce.Web.Services.Coupon;
 using DailyDolce.Web.Services.Product;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
@@ -11,10 +13,16 @@ namespace DailyDolce.Web.Controllers {
     public class CartController : Controller {
         private readonly IProductService _productService;
         private readonly ICartService _cartService;
+        private readonly ICouponService _couponService;
 
-        public CartController(IProductService productService, ICartService cartService) {
+        public CartController(
+            IProductService productService, 
+            ICartService cartService,
+            ICouponService couponService) {
+
             _productService = productService;
             _cartService = cartService;
+            _couponService = couponService;
         }
 
         [Authorize]
@@ -22,8 +30,36 @@ namespace DailyDolce.Web.Controllers {
             return View(await GetCart());
         }
 
+        private async Task<CartDto> GetCart() {
+
+            var userId = User.Claims.Where(u => u.Type == "sub")?.FirstOrDefault()?.Value;
+            var accessToken = await HttpContext.GetTokenAsync("access_token");
+            var cartResponse = await _cartService.GetCartByUserId<ResponseDto>(userId, accessToken);
+
+            CartDto cartDto = new();
+            if (cartResponse.Data != null && cartResponse.Success) {
+                cartDto = JsonConvert.DeserializeObject<CartDto>(Convert.ToString(cartResponse.Data));
+
+                foreach (var cartProductDto in cartDto.CartProductsDto) {
+                    cartDto.TotalOrder += (cartProductDto.Product.Price * cartProductDto.Quantity);
+                };
+
+                if (!string.IsNullOrEmpty(cartDto.CouponCode)) {
+                    var couponReponse = await _couponService.GetCouponByCode<ResponseDto>(cartDto.CouponCode, accessToken);
+
+                    if (couponReponse.Data != null && couponReponse.Success) {
+                        CouponDto couponDto = JsonConvert.
+                            DeserializeObject<CouponDto>(Convert.ToString(couponReponse.Data));
+                        cartDto.Discount = couponDto.Discount;
+                        cartDto.TotalOrder -= couponDto.Discount;
+                    }
+                }
+            }
+            return cartDto;
+        }
+
         [Authorize]
-        public async Task<IActionResult> Remove(int cartProductId) {
+        public async Task<IActionResult> RemoveFromCart(int cartProductId) {
             var userId = User.Claims.Where(u => u.Type == "sub")?.FirstOrDefault()?.Value;
             var accessToken = await HttpContext.GetTokenAsync("access_token");
             var response = await _cartService.RemoveFromCart<ResponseDto>(cartProductId, accessToken);
@@ -32,23 +68,31 @@ namespace DailyDolce.Web.Controllers {
                 return RedirectToAction(nameof(CartIndex));
 
             return View();
-        }
+        }       
 
-        private async Task<GetCartDto> GetCart() {
+        [HttpPost]
+        public async Task<IActionResult> ApplyCoupon(CartDto cartDto) {
 
             var userId = User.Claims.Where(u => u.Type == "sub")?.FirstOrDefault()?.Value;
             var accessToken = await HttpContext.GetTokenAsync("access_token");
-            var response = await _cartService.GetCartByUserId<ResponseDto>(userId, accessToken);
+            var response = await _cartService.ApplyCoupon<ResponseDto>(cartDto, accessToken);
 
-            GetCartDto getCartDto = new();
-            if (response.Data != null && response.Success) {
-                getCartDto = JsonConvert.DeserializeObject<GetCartDto>(Convert.ToString(response.Data));
+            if (response.Data != null && response.Success)
+                return RedirectToAction(nameof(CartIndex));
 
-                foreach (var cartProductDto in getCartDto.CartProductsDto) {
-                    getCartDto.TotalOrder += (cartProductDto.Product.Price * cartProductDto.Quantity);
-                };
-            }
-            return getCartDto;
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> RemoveCoupon(CartDto cartDto) {
+            var userId = User.Claims.Where(u => u.Type == "sub")?.FirstOrDefault()?.Value;
+            var accessToken = await HttpContext.GetTokenAsync("access_token");
+            var response = await _cartService.RemoveCoupon<ResponseDto>(cartDto, accessToken);
+
+            if (response.Data != null && response.Success)
+                return RedirectToAction(nameof(CartIndex));
+
+            return View();
         }
     }
 }

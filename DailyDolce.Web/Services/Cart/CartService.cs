@@ -25,20 +25,29 @@ namespace DailyDolce.Web.Services.Cart {
             });
         }
 
-     /*   public async Task<T> UpdateCart<T>(CartDto cartDto, string token = null) {
-            return await SendRequest<T>(new ApiRequest() {
-                ApiType = SD.ApiType.PUT,
-                Data = cartDto,
-                Url = $"{SD.ShoppingCartApiBase}/api/cart",
-                AccessToken = token
-            });
-        }*/
-
         public async Task<T> RemoveFromCart<T>(int cartProductId, string token = null) {
             return await SendRequest<T>(new ApiRequest() {
                 ApiType = SD.ApiType.DELETE,
                 Data = cartProductId,
                 Url = $"{SD.ShoppingCartApiBase}/api/cart/{cartProductId}",
+                AccessToken = token
+            });
+        }
+
+        public async Task<T> ApplyCoupon<T>(CartDto cartDto, string token = null) {
+            return await SendRequest<T>(new ApiRequest() {
+                ApiType = SD.ApiType.PUT,
+                Data = cartDto,
+                Url = $"{SD.ShoppingCartApiBase}/api/cart/applyCoupon",
+                AccessToken = token
+            });
+        }
+
+        public async Task<T> RemoveCoupon<T>(CartDto cartDto, string token = null) {
+            return await SendRequest<T>(new ApiRequest() {
+                ApiType = SD.ApiType.PUT,
+                Data = cartDto,
+                Url = $"{SD.ShoppingCartApiBase}/api/cart/removeCoupon",
                 AccessToken = token
             });
         }

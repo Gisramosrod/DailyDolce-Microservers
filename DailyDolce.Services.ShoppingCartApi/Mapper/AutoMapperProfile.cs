@@ -6,7 +6,7 @@ namespace DailyDolce.Services.ShoppingCartApi.Mapper {
     public class AutoMapperProfile : Profile {
         public AutoMapperProfile() {
             CreateMap<ProductModel, ProductDto>().ReverseMap();
-            CreateMap<CartModel, GetCartDto>().ReverseMap();
+            CreateMap<CartModel, CartDto>().ReverseMap();
             CreateMap<CartProductModel, CartProductDto>().ReverseMap();
         }
     }

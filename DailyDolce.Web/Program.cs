@@ -2,6 +2,7 @@ using DailyDolce.Web.Services.Product;
 using DailyDolce.Web;
 using DailyDolce.Web.Services.Cart;
 using Microsoft.AspNetCore.Authentication;
+using DailyDolce.Web.Services.Coupon;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,6 +22,12 @@ SD.ShoppingCartApiBase = builder.Configuration
     .GetSection("ServiceUrls").GetSection("ShoppingCartApi").Value;
 builder.Services.AddHttpClient<ICartService, CartService>();
 builder.Services.AddScoped<ICartService, CartService>();
+
+//Coupon Api
+SD.CouponApiBase = builder.Configuration
+    .GetSection("ServiceUrls").GetSection("CouponApi").Value;
+builder.Services.AddHttpClient<ICouponService, CouponService>();
+builder.Services.AddScoped<ICouponService, CouponService>();
 
 //Authentication
 builder.Services.AddAuthentication(options => {

@@ -32,7 +32,7 @@ namespace DailyDolce.Services.ShoppingCartApi.Controllers {
         public async Task<ActionResult<ResponseDto>> AddToCart(AddToCartDto addToCartDto) {
 
             try {
-                _response.Data = await _cartService.AddProductToCart(addToCartDto);
+                _response.Data = await _cartService.AddToCart(addToCartDto);
             } catch (Exception ex) {
                 _response.Success = false;
                 _response.ErrorMessages = new List<string>() { ex.Message };
@@ -40,6 +40,7 @@ namespace DailyDolce.Services.ShoppingCartApi.Controllers {
             return _response;
         }
 
+        //este es un update tambien
         [HttpDelete("{cartProductId}")]
         public async Task<ActionResult<ResponseDto>> RemoveFromCart(int cartProductId) {
 
@@ -51,12 +52,12 @@ namespace DailyDolce.Services.ShoppingCartApi.Controllers {
             }
             return _response;
         }
-        /*
-        [HttpPut]
-        public async Task<ActionResult<ResponseDto>> UpdateCard(CartDto updatedCart) {
+
+        [HttpPut("applyCoupon")]
+        public async Task<ActionResult<ResponseDto>> ApplyCoupon(CartDto cartDto) {
 
             try {
-                _response.Data = await _cartRepository.CreateUpdateCart(updatedCart);
+                _response.Data = await _cartService.ApplyCoupon(cartDto.UserId, cartDto.CouponCode);
             } catch (Exception ex) {
                 _response.Success = false;
                 _response.ErrorMessages = new List<string>() { ex.Message };
@@ -64,16 +65,17 @@ namespace DailyDolce.Services.ShoppingCartApi.Controllers {
             return _response;
         }
 
-        [HttpDelete("{cardId}")]
-        public async Task<ActionResult<ResponseDto>> DeleteCart(int id) {
+        [HttpPut("removeCoupon")]
+        public async Task<ActionResult<ResponseDto>> RemoveCoupon(CartDto cardDto) {
 
             try {
-                _response.Data = await _cartRepository.RemoveFromCart(id);
+                _response.Data = await _cartService.RemoveCoupon(cardDto.UserId);
             } catch (Exception ex) {
                 _response.Success = false;
                 _response.ErrorMessages = new List<string>() { ex.Message };
             }
             return _response;
-        }*/
+        }
+     
     }
 }
