@@ -51,5 +51,14 @@ namespace DailyDolce.Web.Services.Cart {
                 AccessToken = token
             });
         }
+
+        public async Task<T> Checkout<T>(OrderDto orderDto, string token = null) {
+            return await SendRequest<T>(new ApiRequest() {
+                ApiType = SD.ApiType.POST,
+                Data = orderDto,
+                Url = $"{SD.ShoppingCartApiBase}/api/cart/checkout",
+                AccessToken = token
+            });
+        }
     }
 }

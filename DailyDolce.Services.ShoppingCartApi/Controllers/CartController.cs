@@ -1,4 +1,5 @@
-﻿using DailyDolce.Services.ShoppingCartApi.Dtos;
+﻿using DailyDolce.MessageBus;
+using DailyDolce.Services.ShoppingCartApi.Dtos;
 using DailyDolce.Services.ShoppingCartApi.Services.Cart;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -8,11 +9,13 @@ namespace DailyDolce.Services.ShoppingCartApi.Controllers {
     [ApiController]
     public class CartController : ControllerBase {
         private readonly ICartService _cartService;
+        private readonly IMessageBus _messageBus;
         protected ResponseDto _response;
 
-        public CartController(ICartService cartService) {
+        public CartController(ICartService cartService, IMessageBus messageBus) {
             _response = new ResponseDto();
             _cartService = cartService;
+            _messageBus = messageBus;
         }
 
         [HttpGet("{userId}")]
@@ -76,6 +79,22 @@ namespace DailyDolce.Services.ShoppingCartApi.Controllers {
             }
             return _response;
         }
-     
+
+        [HttpPost("checkout")]
+        public async Task<ActionResult<ResponseDto>> Checkout (OrderDto orderDto) {
+            try {
+                if (orderDto.CartDto == null) {
+                    _response.Success = false;
+                    return BadRequest(_response);
+                }
+
+                await _messageBus.PublishMessage(orderDto, "checkoutmessagetopic");
+
+            }catch(Exception ex) {
+
+            }
+            return _response;
+        }
+
     }
 }

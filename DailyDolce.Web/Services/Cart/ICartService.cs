@@ -8,6 +8,6 @@ namespace DailyDolce.Web.Services.Cart {
         Task<T> RemoveFromCart<T>(int cartProductId, string token = null);
         Task<T> ApplyCoupon<T>(CartDto cartDto, string token = null);
         Task<T> RemoveCoupon<T>(CartDto cartDto, string token = null);
-
+        Task<T> Checkout<T>(OrderDto orderDto, string token = null);
     }
 }

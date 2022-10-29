@@ -8,6 +8,5 @@ namespace DailyDolce.Services.ShoppingCartApi.Services.Cart {
         Task<bool> ApplyCoupon(string userId, string couponCode);
         Task<bool> RemoveCoupon(string userId);
 
-        //Task<bool> ClearCart(string userId);
     }
 }

@@ -1,6 +1,8 @@
+using DailyDolce.MessageBus;
 using DailyDolce.Services.ShoppingCartApi.Data;
 using DailyDolce.Services.ShoppingCartApi.Services.Cart;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Http;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 
@@ -16,6 +18,8 @@ builder.Services.AddDbContext<DataContext>(options => {
 //Mapper
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
+//Message Bus
+builder.Services.AddSingleton<IMessageBus, AzureServiceBusMessageBus>();
 //ShoppingCart Services
 builder.Services.AddScoped<ICartService, CartService>();
 

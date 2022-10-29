@@ -31,7 +31,6 @@ builder.Services.AddIdentityServer(options => {
 .AddDeveloperSigningCredential();
 
 builder.Services.AddScoped<IDbInitializer, DbInitializer>();
-
 builder.Services.AddScoped<IProfileService, ProfileService>();
 
 builder.Services.AddControllersWithViews();

@@ -8,8 +8,11 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using System.ComponentModel.DataAnnotations;
 
 namespace DailyDolce.Web.Controllers {
+
+    [Authorize]
     public class CartController : Controller {
         private readonly IProductService _productService;
         private readonly ICartService _cartService;
@@ -25,7 +28,6 @@ namespace DailyDolce.Web.Controllers {
             _couponService = couponService;
         }
 
-        [Authorize]
         public async Task<IActionResult> CartIndex() {
             return View(await GetCart());
         }
@@ -58,7 +60,6 @@ namespace DailyDolce.Web.Controllers {
             return cartDto;
         }
 
-        [Authorize]
         public async Task<IActionResult> RemoveFromCart(int cartProductId) {
             var userId = User.Claims.Where(u => u.Type == "sub")?.FirstOrDefault()?.Value;
             var accessToken = await HttpContext.GetTokenAsync("access_token");
@@ -94,5 +95,31 @@ namespace DailyDolce.Web.Controllers {
 
             return View();
         }
+
+        public async Task<IActionResult> Checkout() {
+
+            OrderDto orderDto = new() {
+                CartDto = await GetCart()
+            };
+            return View(orderDto);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Checkout(OrderDto orderDto) {
+
+            orderDto.CartDto = await GetCart();
+
+            try {
+                var accessToken = await HttpContext.GetTokenAsync("access_token");
+                var response =  await _cartService.Checkout<ResponseDto>(orderDto);
+                return RedirectToAction(nameof(Confirmation));
+
+            } catch { return View(orderDto); }
+        }
+
+        public IActionResult Confirmation() {
+            return View();
+        }
+        
     }
 }

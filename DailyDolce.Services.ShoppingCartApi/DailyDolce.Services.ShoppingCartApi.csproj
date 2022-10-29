@@ -26,4 +26,8 @@
     <Folder Include="Repositories\Product\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\DailyDolce.MessageBus\DailyDolce.MessageBus.csproj" />
+  </ItemGroup>
+
 </Project>
