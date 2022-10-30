@@ -98,16 +98,29 @@ namespace DailyDolce.Web.Controllers {
 
         public async Task<IActionResult> Checkout() {
 
+            var cartDto = await GetCart();
+
             OrderDto orderDto = new() {
-                CartDto = await GetCart()
+                UserId = cartDto.UserId,
+                CouponCode = cartDto.CouponCode,
+                Discount = cartDto.Discount,
+                TotalOrder = cartDto.TotalOrder,
+                CartProductsDto = cartDto.CartProductsDto
             };
+
             return View(orderDto);
         }
 
         [HttpPost]
         public async Task<IActionResult> Checkout(OrderDto orderDto) {
 
-            orderDto.CartDto = await GetCart();
+            var cartDto = await GetCart();
+
+            orderDto.UserId = cartDto.UserId;
+            orderDto.CouponCode = cartDto.CouponCode;
+            orderDto.Discount = cartDto.Discount;
+            orderDto.TotalOrder = cartDto.TotalOrder;
+            orderDto.CartProductsDto = cartDto.CartProductsDto;           
 
             try {
                 var accessToken = await HttpContext.GetTokenAsync("access_token");

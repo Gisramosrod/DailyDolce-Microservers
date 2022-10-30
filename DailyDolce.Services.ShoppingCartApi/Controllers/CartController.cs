@@ -83,7 +83,7 @@ namespace DailyDolce.Services.ShoppingCartApi.Controllers {
         [HttpPost("checkout")]
         public async Task<ActionResult<ResponseDto>> Checkout (OrderDto orderDto) {
             try {
-                if (orderDto.CartDto == null) {
+                if (orderDto.CartProductsDto == null) {
                     _response.Success = false;
                     return BadRequest(_response);
                 }

@@ -65,7 +65,7 @@
                         </div>
                         <hr />
 
-                        @foreach (var product in Model.CartDto.CartProductsDto) {
+                        @foreach (var product in Model.CartProductsDto) {
                             <div class="row h-100">
                                 <div class="col-6">
                                     <span style="font-size:20px">@product.Product.Name</span>
@@ -84,9 +84,9 @@
 
                         <div class="row">
                             <div class="col-12 text-right pr-4 text-danger">
-                                Order Total : @Model.CartDto.TotalOrder.ToString("c") <br />
-                                @if (Model.CartDto.Discount > 0) {
-                                    <span class="text-success">Order Discount: @Model.CartDto.Discount.ToString("c")</span>
+                                Order Total : @Model.TotalOrder.ToString("c") <br />
+                                @if (Model.Discount > 0) {
+                                    <span class="text-success">Order Discount: @Model.Discount.ToString("c")</span>
                                 }
                             </div>
                         </div>
