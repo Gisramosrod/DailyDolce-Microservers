@@ -1,9 +1,5 @@
-﻿using DailyDolce.MessageBus;
-using DailyDolce.Services.ShoppingCartApi.Dtos;
-
-namespace DailyDolce.Service.ShoppingCartApi.Dtos {
-    public class OrderDto : BaseMessage {
-
+﻿namespace DailyDolce.Services.OrderApi.Dtos {
+    public class OrderDto {
         public string UserId { get; set; }
         public string CouponCode { get; set; }
         public string FirstName { get; set; }
@@ -16,6 +12,6 @@ namespace DailyDolce.Service.ShoppingCartApi.Dtos {
         public string ExpirationDate { get; set; }
         public double TotalOrder { get; set; }
 
-        public List<CartProductDto> CartProductsDto { get; set; }
+        public List<OrderProductDto> CartProductsDto { get; set; }
     }
 }

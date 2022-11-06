@@ -20,6 +20,7 @@ builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 //Message Bus
 builder.Services.AddSingleton<IMessageBus, AzureServiceBusMessageBus>();
+
 //ShoppingCart Services
 builder.Services.AddScoped<ICartService, CartService>();
 

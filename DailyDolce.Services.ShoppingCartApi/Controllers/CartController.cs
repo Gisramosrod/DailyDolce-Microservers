@@ -1,8 +1,10 @@
 ﻿using DailyDolce.MessageBus;
+using DailyDolce.Service.ShoppingCartApi.Dtos;
 using DailyDolce.Services.ShoppingCartApi.Dtos;
 using DailyDolce.Services.ShoppingCartApi.Services.Cart;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 
 namespace DailyDolce.Services.ShoppingCartApi.Controllers {
     [Route("api/cart")]
@@ -10,12 +12,16 @@ namespace DailyDolce.Services.ShoppingCartApi.Controllers {
     public class CartController : ControllerBase {
         private readonly ICartService _cartService;
         private readonly IMessageBus _messageBus;
+        private readonly IConfiguration _configuration;
+        private readonly string _checkoutOrderTopic;
         protected ResponseDto _response;
 
-        public CartController(ICartService cartService, IMessageBus messageBus) {
+        public CartController(ICartService cartService, IMessageBus messageBus, IConfiguration configuration) {
             _response = new ResponseDto();
             _cartService = cartService;
             _messageBus = messageBus;
+            _configuration = configuration;
+            _checkoutOrderTopic = _configuration.GetSection("AzureServiceBus").GetSection("UpdatePaymentStatusTopic").Value;
         }
 
         [HttpGet("{userId}")]
@@ -81,18 +87,16 @@ namespace DailyDolce.Services.ShoppingCartApi.Controllers {
         }
 
         [HttpPost("checkout")]
-        public async Task<ActionResult<ResponseDto>> Checkout (OrderDto orderDto) {
+        public async Task<ActionResult<ResponseDto>> Checkout(OrderDto orderDto) {
             try {
                 if (orderDto.CartProductsDto == null) {
                     _response.Success = false;
                     return BadRequest(_response);
                 }
 
-                await _messageBus.PublishMessage(orderDto, "checkoutmessagetopic");
+                await _messageBus.PublishMessage(orderDto, _checkoutOrderTopic);
 
-            }catch(Exception ex) {
-
-            }
+            } catch (Exception ex) { throw; }
             return _response;
         }
 
