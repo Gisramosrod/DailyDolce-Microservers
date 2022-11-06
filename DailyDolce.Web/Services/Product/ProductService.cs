@@ -12,7 +12,7 @@ namespace DailyDolce.Web.Services.Product
         public async Task<T> GetAllProducts<T>(string token) {
             return await SendRequest<T>(new ApiRequest() {
                 ApiType = SD.ApiType.GET,
-                Url = $"{SD.ProductApiBase}/api/products",
+                Url = $"{SD.GatewayBaseUrl}/api/products",
                 AccessToken = token
             });
         }
@@ -20,7 +20,7 @@ namespace DailyDolce.Web.Services.Product
         public async Task<T> GetProductById<T>(int id, string token) {
             return await SendRequest<T>(new ApiRequest() {
                 ApiType = SD.ApiType.GET,
-                Url = $"{SD.ProductApiBase}/api/products/{id}",
+                Url = $"{SD.GatewayBaseUrl}/api/products/{id}",
                 AccessToken = token
             });
         }
@@ -29,7 +29,7 @@ namespace DailyDolce.Web.Services.Product
             return await SendRequest<T>(new ApiRequest() {
                 Data = newProduct,
                 ApiType = SD.ApiType.POST,
-                Url = $"{SD.ProductApiBase}/api/products",
+                Url = $"{SD.GatewayBaseUrl}/api/products",
                 AccessToken = token
             });
         }
@@ -38,7 +38,7 @@ namespace DailyDolce.Web.Services.Product
             return await SendRequest<T>(new ApiRequest() {
                 Data = updatedProduct,
                 ApiType = SD.ApiType.PUT,
-                Url = $"{SD.ProductApiBase}/api/products",
+                Url = $"{SD.GatewayBaseUrl}/api/products",
                 AccessToken = token
             });
         }
@@ -46,7 +46,7 @@ namespace DailyDolce.Web.Services.Product
         public async Task<T> DeleteProduct<T>(int id, string token) {
             return await SendRequest<T>(new ApiRequest() {
                 ApiType = SD.ApiType.DELETE,
-                Url = $"{SD.ProductApiBase}/api/products/{id}",
+                Url = $"{SD.GatewayBaseUrl}/api/products/{id}",
                 AccessToken = token
             });
         }

@@ -11,7 +11,7 @@ namespace DailyDolce.Web.Services.Cart {
         public async Task<T> GetCartByUserId<T>(string userId, string token = null) {
             return await SendRequest<T>(new ApiRequest() {
                 ApiType = SD.ApiType.GET,
-                Url = $"{SD.ShoppingCartApiBase}/api/cart/{userId}",
+                Url = $"{SD.GatewayBaseUrl}/api/cart/{userId}",
                 AccessToken = token
             });
         }
@@ -20,7 +20,7 @@ namespace DailyDolce.Web.Services.Cart {
             return await SendRequest<T>(new ApiRequest() {
                 ApiType = SD.ApiType.POST,
                 Data = addToCartDto,
-                Url = $"{SD.ShoppingCartApiBase}/api/cart",
+                Url = $"{SD.GatewayBaseUrl}/api/cart",
                 AccessToken = token
             });
         }
@@ -29,7 +29,7 @@ namespace DailyDolce.Web.Services.Cart {
             return await SendRequest<T>(new ApiRequest() {
                 ApiType = SD.ApiType.DELETE,
                 Data = cartProductId,
-                Url = $"{SD.ShoppingCartApiBase}/api/cart/{cartProductId}",
+                Url = $"{SD.GatewayBaseUrl}/api/cart/{cartProductId}",
                 AccessToken = token
             });
         }
@@ -38,7 +38,7 @@ namespace DailyDolce.Web.Services.Cart {
             return await SendRequest<T>(new ApiRequest() {
                 ApiType = SD.ApiType.PUT,
                 Data = cartDto,
-                Url = $"{SD.ShoppingCartApiBase}/api/cart/applyCoupon",
+                Url = $"{SD.GatewayBaseUrl}/api/cart/applyCoupon",
                 AccessToken = token
             });
         }
@@ -47,7 +47,7 @@ namespace DailyDolce.Web.Services.Cart {
             return await SendRequest<T>(new ApiRequest() {
                 ApiType = SD.ApiType.PUT,
                 Data = cartDto,
-                Url = $"{SD.ShoppingCartApiBase}/api/cart/removeCoupon",
+                Url = $"{SD.GatewayBaseUrl}/api/cart/removeCoupon",
                 AccessToken = token
             });
         }
@@ -56,7 +56,7 @@ namespace DailyDolce.Web.Services.Cart {
             return await SendRequest<T>(new ApiRequest() {
                 ApiType = SD.ApiType.POST,
                 Data = orderDto,
-                Url = $"{SD.ShoppingCartApiBase}/api/cart/checkout",
+                Url = $"{SD.GatewayBaseUrl}/api/cart/checkout",
                 AccessToken = token
             });
         }

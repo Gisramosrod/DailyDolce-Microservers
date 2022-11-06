@@ -11,23 +11,41 @@ var builder = WebApplication.CreateBuilder(args);
 //Mapper
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
+//Ocelot Gateway Base Url
+SD.GatewayBaseUrl = builder.Configuration
+    .GetSection("ServiceUrls").GetSection("GatewayUrl").Value;
+
+//Product Api
+builder.Services.AddHttpClient<IProductService, ProductService>();
+builder.Services.AddScoped<IProductService, ProductService>();
+
+//Shopping Cart Api
+builder.Services.AddHttpClient<ICartService, CartService>();
+builder.Services.AddScoped<ICartService, CartService>();
+
+//Coupon Api
+builder.Services.AddHttpClient<ICouponService, CouponService>();
+builder.Services.AddScoped<ICouponService, CouponService>();
+
+/*
 //Product Api
 SD.ProductApiBase = builder.Configuration
-    .GetSection("ServiceUrls").GetSection("ProductApi").Value;
+    .GetSection("ServiceUrls").GetSection("GatewayUrl").Value;
 builder.Services.AddHttpClient<IProductService, ProductService>();
 builder.Services.AddScoped<IProductService, ProductService>();
 
 //Shopping Cart Api
 SD.ShoppingCartApiBase = builder.Configuration
-    .GetSection("ServiceUrls").GetSection("ShoppingCartApi").Value;
+    .GetSection("ServiceUrls").GetSection("GatewayUrl").Value;
 builder.Services.AddHttpClient<ICartService, CartService>();
 builder.Services.AddScoped<ICartService, CartService>();
 
 //Coupon Api
 SD.CouponApiBase = builder.Configuration
-    .GetSection("ServiceUrls").GetSection("CouponApi").Value;
+    .GetSection("ServiceUrls").GetSection("GatewayUrl").Value;
 builder.Services.AddHttpClient<ICouponService, CouponService>();
 builder.Services.AddScoped<ICouponService, CouponService>();
+*/
 
 //Authentication
 builder.Services.AddAuthentication(options => {
@@ -35,7 +53,8 @@ builder.Services.AddAuthentication(options => {
     options.DefaultChallengeScheme = "oidc";
 }).AddCookie("Cookies", c => c.ExpireTimeSpan = TimeSpan.FromMinutes(10))
 .AddOpenIdConnect("oidc", options => {
-    options.Authority = builder.Configuration.GetSection("ServiceUrls").GetSection("IdentityApi").Value;
+    options.Authority = builder.Configuration
+    .GetSection("ServiceUrls").GetSection("IdentityApi").Value;
     options.GetClaimsFromUserInfoEndpoint = true;
     options.ClientId = "dailyDolce";
     options.ClientSecret = "secret";
